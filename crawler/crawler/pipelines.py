@@ -7,7 +7,17 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
+from scrapy.exceptions import DropItem
 
-class CrawlerPipeline:
+
+class DuplicatesPipeline:
+    def __init__(self):
+        self.rids_seen = set()
+
     def process_item(self, item, spider):
-        return item
+        adapter = ItemAdapter(item)
+        if adapter['rid'] in self.rids_seen:
+            raise DropItem(f"Duplicate item found: {item!r}")
+        else:
+            self.rids_seen.add(adapter['rid'])
+            return item
