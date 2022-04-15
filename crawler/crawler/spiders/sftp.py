@@ -14,10 +14,10 @@ class SftpSpider(Spider):
     HOST_NAME = 'ft42.paradox.ai'
     USERNAME = 'valvolineuser'
     PASSWORD = 'KV3scl_qwepa!slQcla8'
+    DIRECTORY = 'valvolineuser/prod'
 
     def start_requests(self):
-        self.logger.info("Start Crawling")
-        yield Request(url=f'file:///home/tan/Downloads/tmp.xml')
+        yield Request(url=f'file://{self.FILENAME}')
 
     def parse(self, response, **kwargs):
         pass
