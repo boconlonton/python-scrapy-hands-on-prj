@@ -7,6 +7,8 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
+from scrapy.spiders import Spider
+
 from scrapy.exceptions import DropItem
 
 
@@ -21,3 +23,13 @@ class DuplicatesPipeline:
         else:
             self.rids_seen.add(adapter['rid'])
             return item
+
+
+class SftpPipeline:
+
+
+    def open_spider(self, spider: Spider):
+        spider.logger.info("Open")
+
+    def close_spider(self, spider: Spider):
+        spider.logger.info("Closed")
