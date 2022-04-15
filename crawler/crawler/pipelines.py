@@ -1,15 +1,11 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-
-
-# useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
 from scrapy.spiders import Spider
 
 from scrapy.exceptions import DropItem
+
+from paramiko import SFTPClient
+from paramiko import Transport
 
 
 class DuplicatesPipeline:
@@ -27,9 +23,12 @@ class DuplicatesPipeline:
 
 class SftpPipeline:
 
-
     def open_spider(self, spider: Spider):
         spider.logger.info("Open")
+        with Transport((spider.HOST_NAME, 22)) as transport:
+            transport.connect(None,
+                          username=spider.USERNAME,
+                          password=spider.PASSWORD)
 
-    def close_spider(self, spider: Spider):
-        spider.logger.info("Closed")
+            with SFTPClient.from_transport(transport) as sftp_client:
+                spider.logger.info('Connection successfully established...')

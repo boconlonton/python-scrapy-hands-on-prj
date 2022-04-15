@@ -11,20 +11,9 @@ class SftpSpider(Spider):
             'crawler.pipelines.SftpPipeline': 100
         }
     }
-    HOST_NAME = None
-    USERNAME = None
-    PASSWORD = None
-
-    def __init__(self,
-                 HOST_NAME,
-                 USERNAME,
-                 PASSWORD,
-                 **kwargs):
-        super().__init__(**kwargs)
-        self.HOST_NAME = HOST_NAME
-        self.USERNAME = USERNAME
-        self.PASSWORD = PASSWORD
-        self.logger.info("Initialization")
+    HOST_NAME = 'ft42.paradox.ai'
+    USERNAME = 'valvolineuser'
+    PASSWORD = 'KV3scl_qwepa!slQcla8'
 
     def start_requests(self):
         self.logger.info("Start Crawling")
