@@ -28,6 +28,6 @@ WORKDIR /scrapy-application/crawler
 
 EXPOSE 6800
 
-CMD ["scrapyd-deploy", "default"]
+CMD ["scrapyd-deploy", "crawler"]
 
 CMD ["scrapyd"]
