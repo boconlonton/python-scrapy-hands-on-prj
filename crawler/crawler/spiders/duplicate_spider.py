@@ -12,20 +12,21 @@ import scrapy
 
 class DuplicateSpiderSpider(scrapy.Spider):
     name = 'duplicate_spider'
-    start_urls = ['https://jobs.emersonhospital.org/feeds/download/aggregator']
+    start_urls = ['file:///home/tan/Downloads/Paradox_Job_Search_Bot_Sample_Feed.xml']
 
     def parse(self, response, **kwargs):
         # parser = XMLParser(strip_cdata=False)
         # root = fromstring(response.body, parser=parser, base_url=response.url)
         # selector = Selector(root=root)
-        # jobs = selector.xpath('//job')
-        jobs = response.xpath('//job')
+        # jobs = selector.xpath('//Report_Data//Report_Entry')
+        response.selector.register_namespace('wd', 'urn:com.workday.report/Paradox_Job_Search_Bot_Sample_Feed')
+        jobs = response.xpath('//wd:Report_Entry')
         dup_dict = defaultdict(int)
         id_set = set()
         cnt = 0
         for job in jobs:
             cnt += 1
-            job_id = job.xpath('./detail-url/text()').get()
+            job_id = job.xpath('./wd:Job_Req_ID/text()').get()
             if job_id in id_set:
                 dup_dict[job_id] += 1
             else:
