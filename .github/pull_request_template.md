@@ -10,6 +10,7 @@
 <!-- Please link to the issue here: -->
 
 ## ATS/Spider Name
+
 <!-- Please include the ATS/Spider name here: -->
 
 ## Type
@@ -31,13 +32,17 @@
 - [ ] Other (please describe):
 
 ## Fields
+
 <!-- Please list all fields you have been extracted -->
 
 ## Test
 
 <!-- How to see your changes, what to look out for. -->
+
 #### Original
+
 <!-- Please include an item from original feed. -->
 
 #### Test
+
 <!-- Please include an extracted item in order to compare with original feed. -->
