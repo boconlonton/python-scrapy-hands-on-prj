@@ -2,9 +2,13 @@ from scrapy import Spider
 from scrapy.http import Request
 
 class DynamicWebsiteSpider(Spider):
+    # Metadata
     name = 'dynamic_website'
     allowed_domains = ['nuvasive.avature.net']
     start_urls = ['https://nuvasive.avature.net/careers/SearchJobs/?jobOffset=0']
+    SCHEDULE_TYPE = 'standard'
+
+    # Custom data
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -9,6 +9,9 @@ class XmlSpider(Spider):
     allowed_domains = ['www.appone.com']
     start_urls = ['https://www.appone.com/branding/adfeed/default.asp?servervar=ValvolineInstantOilChange.AdFeed.appone.com&all=yes&accesscode=any']
 
+    SCHEDULE_TYPE = 'period'
+    SCHEDULE_PERIOD = ['02:00', '08:00', '12:00', '17:00', '22:00']
+
     def parse(self, response, **kwargs):
         jobs = response.xpath('//Job')
        

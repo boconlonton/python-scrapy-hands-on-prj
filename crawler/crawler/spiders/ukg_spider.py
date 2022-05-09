@@ -12,8 +12,12 @@ from crawler.items import Job
 
 
 class UkgSpiderSpider(Spider):
+    # Metadata
     name = 'ukg_spider'
     allowed_domains = ['ultipro.com']
+    SCHEDULE_TYPE = 'standard'
+
+    # Custom data
     _CLIENTS = {
         157991: {
             'login_url': "https://login.ultipro.com/t/HHA1000HHA/token",

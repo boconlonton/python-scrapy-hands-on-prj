@@ -4,6 +4,7 @@ from scrapy.http import Request
 
 
 class SftpSpider(Spider):
+    # Metadata
     name = 'sftp'
     allowed_domains = ['*.com']
     custom_settings = {
@@ -11,6 +12,9 @@ class SftpSpider(Spider):
             'crawler.pipelines.SftpPipeline': 100
         }
     }
+    SCHEDULE_TYPE = 'standard'
+
+    # Additional
     HOST_NAME = 'ft42.paradox.ai'
     USERNAME = 'valvolineuser'
     PASSWORD = 'KV3scl_qwepa!slQcla8'
