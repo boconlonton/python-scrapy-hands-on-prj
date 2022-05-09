@@ -15,7 +15,6 @@ class UkgSpiderSpider(Spider):
     # Metadata
     name = 'ukg_spider'
     allowed_domains = ['ultipro.com']
-    SCHEDULE_TYPE = 'standard'
 
     # Custom data
     _CLIENTS = {

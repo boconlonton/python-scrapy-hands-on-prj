@@ -14,7 +14,6 @@ class DuplicateSpiderSpider(scrapy.Spider):
     # Metadata
     name = 'duplicate_spider'
     start_urls = ['file:///home/tan/Downloads/Paradox_Job_Search_Bot_Sample_Feed.xml']
-    SCHEDULE_TYPE = 'standard'
 
     # Custom data
 

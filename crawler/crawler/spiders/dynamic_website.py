@@ -6,7 +6,6 @@ class DynamicWebsiteSpider(Spider):
     name = 'dynamic_website'
     allowed_domains = ['nuvasive.avature.net']
     start_urls = ['https://nuvasive.avature.net/careers/SearchJobs/?jobOffset=0']
-    SCHEDULE_TYPE = 'standard'
 
     # Custom data
 
