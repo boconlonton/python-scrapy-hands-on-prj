@@ -1,103 +1,49 @@
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
 from scrapy import signals
-
-# useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
+import os
 
 
-class CrawlerSpiderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the spider middleware does not modify the
-    # passed objects.
+def get_database():
+    from pymongo import MongoClient
+    import pymongo
 
-    @classmethod
-    def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+    # Provide the mongodb atlas url to connect python to mongodb using pymongo
+    CONNECTION_STRING = "mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/myFirstDatabase"
 
-    def process_spider_input(self, response, spider):
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
+    # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
+    from pymongo import MongoClient
+    client = MongoClient(CONNECTION_STRING)
 
-        # Should return None or raise an exception.
-        return None
-
-    def process_spider_output(self, response, result, spider):
-        # Called with the results returned from the Spider, after
-        # it has processed the response.
-
-        # Must return an iterable of Request, or item objects.
-        for i in result:
-            yield i
-
-    def process_spider_exception(self, response, exception, spider):
-        # Called when a spider or process_spider_input() method
-        # (from other spider middleware) raises an exception.
-
-        # Should return either None or an iterable of Request or item objects.
-        pass
-
-    def process_start_requests(self, start_requests, spider):
-        # Called with the start requests of the spider, and works
-        # similarly to the process_spider_output() method, except
-        # that it doesn’t have a response associated.
-
-        # Must return only requests (not items).
-        for r in start_requests:
-            yield r
-
-    def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+    # Create the database for our example (we will use the same database throughout the tutorial
+    return client['user_shopping_list']
 
 
-class CrawlerDownloaderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the downloader middleware does not modify the
-    # passed objects.
+# This is added so that many files can reuse the function get_database()
+if __name__ == "__main__":
+    # Get the database
+    dbname = get_database()
+
+
+class UpdateStatsMiddleware(object):
+    def __init__(self, crawler):
+        self.crawler = crawler
+        # register close_spider method as callback for the spider_closed signal
+        crawler.signals.connect(self.close_spider, signals.spider_closed)
 
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+        return cls(crawler)
 
-    def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
+    def get_jobid(self):
+        """Gets jobid through scrapyd's SCRAPY_JOB env variable"""
+        return os.environ['SCRAPY_JOB']
 
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
-        return None
+    def close_spider(self, spider, reason):
+        # do your magic here...
+        spider.log('Finishing spider with reason: %s' % reason)
+        stats = self.crawler.stats.get_stats()
+        jobid = self.get_jobid()
+        self.write_job_stats(jobid, stats)
 
-    def process_response(self, request, response, spider):
-        # Called with the response returned from the downloader.
-
-        # Must either;
-        # - return a Response object
-        # - return a Request object
-        # - or raise IgnoreRequest
-        return response
-
-    def process_exception(self, request, exception, spider):
-        # Called when a download handler or a process_request()
-        # (from other downloader middleware) raises an exception.
-
-        # Must either:
-        # - return None: continue processing this exception
-        # - return a Response object: stops process_exception() chain
-        # - return a Request object: stops process_exception() chain
+    def write_job_stats(self, jobid, stats):
+        # do your magic here...
         pass
-
-    def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
