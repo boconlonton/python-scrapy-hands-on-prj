@@ -17,13 +17,11 @@ def trigger_spider(payload: TriggerModel):
         data={
             'project': os.getenv('SCRAPY_PROJECT'),
             'spider': payload.ats_name,
-            'params': {
-                'company_id': payload.company_id,
-                'scrape_id': payload.scrape_id,
-                'start_url': payload.start_url,
-                'ats_name': payload.ats_name,
-                **payload.params,
-            }
+            'company_id': payload.company_id,
+            'scrape_id': payload.scrape_id,
+            'start_url': payload.start_url,
+            'ats_name': payload.ats_name,
+            **payload.params,
         }
     )
     return {

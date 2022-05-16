@@ -10,19 +10,12 @@ from scrapy import Request
 class CustomrssSpider(Spider):
     name = 'customrss'
 
-    def __init__(self,
-                 company_id: int,
-                 scrape_id: int,
-                 start_url: str,
-                 ats_name: str,
-                 params: Mapping[str, str],
-                 *args,
-                 **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.start_url = start_url
-        self.parent_node = params.get('parent_node')
-        self.rid = params.get('rid')
-        self.title = params.get('title')
+        self.start_url = kwargs.get('start_url')
+        self.parent_node = kwargs.get('parent_node')
+        self.rid = kwargs.get('rid')
+        self.title = kwargs.get('title')
 
     def start_requests(self):
         yield Request(url=self.start_url)
