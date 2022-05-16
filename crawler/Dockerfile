@@ -17,8 +17,7 @@ RUN pip3 install --upgrade pip
 COPY requirements.txt requirements.txt
 
 RUN python3 -m venv venv \
-&& . ./venv/bin/activate \
-&& pip install scrapyd
+&& . ./venv/bin/activate
 
 RUN pip3 install -r requirements.txt
 
