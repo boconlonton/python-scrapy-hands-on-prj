@@ -1,37 +1,35 @@
 # Scrapy hands-on project
 
-## Installation
+## Components
 
-Create a virtual environment
+- API
+- Web Crawler
 
-```virtualenv venv```
+## How to use
 
-Activate the virtual environment
+### Prerequisites
 
-```source venv/bin/activate```
+- Docker
+- docker-compose
 
-Install all dependencies
+### Run
 
-```pip install -r requirements.txt```
+`docker-compose up --build`
 
-## Run a spider
+## Test
 
-Go to the crawler project
-
-```cd crawler```
-
-Start crawling
-
-```scrapy crawl {{spider_name}}```
-
-## Steps to create a spider
-
-Go to the crawler project
-
-```cd crawler```
-
-Create a spider for crawling the target project
-
-```scrapy genspider {{spider_name}} {{target_domain_name}}```
-
-The resulted spider will be located in: `{{project}}/spiders/{{spider_name}}.py`
+``curl -X 'POST' \
+  'http://localhost:8000/trigger' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "company_id": {COMPANY_ID},
+  "scrape_id": {SCRAPE_ID},
+  "start_url": {START_URL},
+  "ats_name": {ATS_NAME},
+  "params": {
+    "parent_node": "job",
+    "title": "title",
+    "rid": "referencenumber"
+  }
+}'``
