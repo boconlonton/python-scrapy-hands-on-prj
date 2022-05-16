@@ -20,7 +20,9 @@ def trigger_spider(payload: TriggerModel):
             'params': {
                 'company_id': payload.company_id,
                 'scrape_id': payload.scrape_id,
-                **payload.params
+                'start_url': payload.start_url,
+                'ats_name': payload.ats_name,
+                **payload.params,
             }
         }
     )
