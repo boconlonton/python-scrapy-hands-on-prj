@@ -14,7 +14,7 @@ openssl-dev
 
 RUN pip3 install --upgrade pip
 
-COPY requirements.txt requirements.txt
+COPY ./requirements.txt requirements.txt
 
 RUN python3 -m venv venv \
 && . ./venv/bin/activate
@@ -23,10 +23,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . /scrapy-application
 
-WORKDIR /scrapy-application/crawler
-
-EXPOSE 6800
+WORKDIR /scrapy-application
 
 CMD ["scrapyd-deploy", "crawler"]
-
-CMD ["scrapyd"]
