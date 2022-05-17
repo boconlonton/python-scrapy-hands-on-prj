@@ -1,4 +1,0 @@
-[
-  {"SPIDER_NAME": "bayada", "SCHEDULE_TYPE": "standard"},
-  {"SPIDER_NAME": "ukg", "SCHEDULE_TYPE":  "period", "PERIOD": ["02:00", "05:00", "10:00", "15:00", "18:00"]}
-]
