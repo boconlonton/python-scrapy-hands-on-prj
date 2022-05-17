@@ -3,7 +3,7 @@ from scrapy import Spider
 from scrapy import Request
 
 
-class CustomrssSpider(Spider):
+class CustomRssSpider(Spider):
     name = 'customrss'
 
     def __init__(self, *args, **kwargs):
