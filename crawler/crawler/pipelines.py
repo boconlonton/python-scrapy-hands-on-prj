@@ -30,8 +30,8 @@ class SftpPipeline:
         self.fo = NamedTemporaryFile()
         with Transport((spider.HOST_NAME, 22)) as transport:
             transport.connect(None,
-                          username=spider.USERNAME,
-                          password=spider.PASSWORD)
+                              username=spider.USERNAME,
+                              password=spider.PASSWORD)
 
             with SFTPClient.from_transport(transport) as sftp_client:
                 spider.logger.info('Connection successfully established...')

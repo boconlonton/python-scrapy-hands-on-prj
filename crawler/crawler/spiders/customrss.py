@@ -1,7 +1,3 @@
-import json
-
-from typing import Mapping
-
 from scrapy import Spider
 
 from scrapy import Request

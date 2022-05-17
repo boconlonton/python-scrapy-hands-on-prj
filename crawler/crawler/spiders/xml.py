@@ -6,7 +6,8 @@ from crawler.items import Job
 class XmlSpider(Spider):
     name = 'xml'
     allowed_domains = ['www.appone.com']
-    start_urls = ['https://www.appone.com/branding/adfeed/default.asp?servervar=ValvolineInstantOilChange.AdFeed'
+    start_urls = ['https://www.appone.com/branding/adfeed/default.asp?'
+                  'servervar=ValvolineInstantOilChange.AdFeed'
                   '.appone.com&all=yes&accesscode=any']
 
     def parse(self, response, **kwargs):

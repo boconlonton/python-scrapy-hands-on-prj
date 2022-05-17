@@ -21,8 +21,11 @@ class UkgSpiderSpider(Spider):
         157991: {
             'login_url': "https://login.ultipro.com/t/HHA1000HHA/token",
             'client_id': "hha1000candidateimport",
-            'client_secret': "XEIftRBsKdYmSQsLpefiyyYnYEnNxfMj-D7PIv6joMCxn1eYiYJ3s5A0BHBBriyL9DJ7CqJaWjqnqT3vebmajA",
-            'start_url': 'https://service5.ultipro.com/talent/recruiting/v2/HHA1000HHA/api/opportunities'
+            'client_secret': "XEIftRBsKdYmSQsLpefiyyYnYEnNxfMj"
+                             "-D7PIv6joMCxn1eYiYJ3s5A0BHBBriyL"
+                             "9DJ7CqJaWjqnqT3vebmajA",
+            'start_url': 'https://service5.ultipro.com/talent/recruiting/v2/'
+                         'HHA1000HHA/api/opportunities'
         }
     }
     _PAGE = 1
@@ -45,7 +48,8 @@ class UkgSpiderSpider(Spider):
     def _parse_login(self, response, **kwargs):
         creds = json.loads(response.text)
         self.access_token = creds['access_token']
-        yield Request(url=f"{self._CLIENTS[self.client_id]['start_url']}?page={self._PAGE}&per_page={self._PER_PAGE}",
+        yield Request(url=f"{self._CLIENTS[self.client_id]['start_url']}?"
+                          f"page={self._PAGE}&per_page={self._PER_PAGE}",
                       headers={
                           'Authorization': f'Bearer {self.access_token}'
                       },
@@ -59,24 +63,30 @@ class UkgSpiderSpider(Spider):
                 if not job.get('job_boards'):
                     continue
                 if len(job.get('job_boards')) == 2:
-                    is_published_external2 = job['job_boards'][1]['is_published_external']
+                    is_published_external2 = job['job_boards'][1][
+                        'is_published_external']
                 job_rid = job['id']
                 job_url = job['job_boards'][0]['recruiting_apply_url']
                 if job_url \
-                        and (job.get('job_boards')[0]['is_published_external'] or is_published_external2) \
+                        and (job.get('job_boards')[0][
+                                 'is_published_external']
+                             or is_published_external2) \
                         and job.get('status') == 'Published':
                     html_raw = requests.get(url=job_url)
-                    jsonraw = re.search('CandidateOpportunityDetail\((.+)\)', html_raw.text)
+                    jsonraw = re.search('CandidateOpportuni'
+                                        'tyDetail\\((.+)\\)', html_raw.text)
                     if jsonraw and jsonraw.group():
                         yield Job({
                             'title': job['title']['en_us'],
                             'url': job_url,
                             'rid': job_rid,
-                            'category_list': [job['job_family']['name']['en_us']],
+                            'category_list': [
+                                job['job_family']['name']['en_us']],
                         })
             self._PAGE += 1
             yield Request(
-                url=f"{self._CLIENTS[self.client_id]['start_url']}?page={self._PAGE}&per_page={self._PER_PAGE}",
+                url=f"{self._CLIENTS[self.client_id]['start_url']}?"
+                    f"page={self._PAGE}&per_page={self._PER_PAGE}",
                 headers={
                     'Authorization': f'Bearer {self.access_token}'
                 },

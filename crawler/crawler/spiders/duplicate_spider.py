@@ -11,14 +11,17 @@ import scrapy
 class DuplicateSpiderSpider(scrapy.Spider):
     # Metadata
     name = 'duplicate_spider'
-    start_urls = ['https://mpwpublicdocs.blob.core.windows.net/silkroad/JobPosting.xml']
+    start_urls = ['https://mpwpublicdocs.blob.core.windows.net/silkroad/'
+                  'JobPosting.xml']
 
     # Custom data
 
     def parse(self, response, **kwargs):
         # CDATA
         # parser = XMLParser(strip_cdata=False)
-        # root = fromstring(response.body, parser=parser, base_url=response.url)
+        # root = fromstring(response.body,
+        #                   parser=parser,
+        #                   base_url=response.url)
         # selector = Selector(root=root)
         # jobs = selector.xpath('//Report_Data//Report_Entry')
         # Get namespace
