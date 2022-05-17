@@ -14,6 +14,7 @@ class SftpSpider(Spider):
             'crawler.pipelines.SftpPipeline': 100
         }
     }
+    FILENAME = ''
 
     # Additional
     HOST_NAME = 'ft42.paradox.ai'
