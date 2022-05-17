@@ -33,3 +33,21 @@
     "rid": "referencenumber"
   }
 }'``
+
+## Local Environment Setup
+
+Clone the repository
+
+`git clone https://github.com/boconlonton/python-scrapy-hands-on-prj.git`
+
+Activate the virtual environment
+
+`cd python-scrapy-hands-on-prj && virtualenv venv && source venv/bin/activate`
+
+Install dependencies
+
+`pip install -r crawler/requirements.txt`
+
+Install precommit
+
+`pre-commit install`
