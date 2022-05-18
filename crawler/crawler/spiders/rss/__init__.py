@@ -145,6 +145,7 @@ class RssSpider(Spider):
     def parse(self, response, *ars, **kwargs):
         self.logger.info("START PARSING")
         jobs = self.extract_parent_node(response)
+        self.logger.info(len(jobs))
         for job in jobs:
             yield Job(
                 rid=self.extract_rid(job),
