@@ -1,7 +1,6 @@
 BOT_NAME = 'crawler'
 
-SPIDER_MODULES = ['crawler.spiders',
-                  'crawler.spiders.rss',
+SPIDER_MODULES = ['crawler.spiders.rss',
                   'crawler.spiders.api_feed',
                   'crawler.spiders.dynamic_site',
                   'crawler.spiders.sftp']

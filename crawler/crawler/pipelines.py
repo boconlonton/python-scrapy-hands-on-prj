@@ -11,16 +11,23 @@ from tempfile import NamedTemporaryFile
 
 
 class DuplicatesPipeline:
+
     def __init__(self):
         self.rids_seen = set()
+        self.duplicates = 0
 
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
         if adapter['rid'] in self.rids_seen:
+            self.duplicates += 1
             raise DropItem(f"Duplicate item found: {item!r}")
         else:
             self.rids_seen.add(adapter['rid'])
             return item
+
+    def close_spider(self, spider: Spider):
+        if self.duplicates > 0:
+            spider.logger.warn(f"Duplicated jobs: {self.duplicates}")
 
 
 class SftpPipeline:

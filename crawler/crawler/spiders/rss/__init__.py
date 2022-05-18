@@ -82,7 +82,7 @@ class RssSpider(Spider):
         else:
             raise CloseSpider('Missing parent node')
 
-    def extract_rid(self, item):
+    def extract_rid(self, item) -> str:
         return item.xpath(f'.//{self.rid}/text()').get()
 
     def extract_apply_url(self, item):
@@ -143,6 +143,7 @@ class RssSpider(Spider):
         return item.xpath(f'.//{self.country}/text()').get()
 
     def parse(self, response, *ars, **kwargs):
+        self.logger.info("START PARSING")
         jobs = self.extract_parent_node(response)
         for job in jobs:
             yield Job(
