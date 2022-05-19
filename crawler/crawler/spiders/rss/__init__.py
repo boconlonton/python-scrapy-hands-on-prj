@@ -2,6 +2,9 @@ import base64
 
 from lxml.etree import XMLParser
 from lxml.etree import fromstring
+from lxml.etree import QName
+from lxml.etree import cleanup_namespaces
+from lxml.etree import tostring
 
 from scrapy import Spider
 from scrapy import Request
@@ -18,6 +21,7 @@ class RssSpider(Spider):
     IS_PUBLIC = True
     HAS_CDATA = False
     HAS_NAMESPACE = False
+    MISSING_NAMESPACE_DEFINITION = False
 
     # Additional Information
     # Mandatory when IS_PUBLIC=False
@@ -76,9 +80,21 @@ class RssSpider(Spider):
                 return selector.xpath(f'//{self.parent_node}')
             elif self.HAS_NAMESPACE:
                 root = fromstring(response.text.encode('utf8'))
-                for ns, val in root.nsmap.items():
-                    response.selector.register_namespace(ns, val)
-            return response.xpath(f'//{self.parent_node}')
+                if self.MISSING_NAMESPACE_DEFINITION:
+                    # Iterate through all XML elements
+                    for elem in root.getiterator():
+                        # Skip comments and processing instructions,
+                        # because they do not have names
+                        # Remove a namespace URI in the element's name
+                        elem.tag = QName(elem).localname
+                    cleanup_namespaces(root)
+                    res = fromstring(tostring(root))
+                    selector = Selector(root=res)
+                    return selector.xpath(f'//{self.parent_node}')
+                else:
+                    for ns, val in root.nsmap.items():
+                        response.selector.register_namespace(ns, val)
+                    return response.xpath(f'//{self.parent_node}')
         else:
             raise CloseSpider('Missing parent node')
 
