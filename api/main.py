@@ -2,18 +2,20 @@ import os
 
 import httpx
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 from models import TriggerModel
 
 from custom_rss import CUSTOM_RSS
 
+from authentication import api_key_auth
+
 
 app = FastAPI()
 
 
-@app.post("/trigger", status_code=201)
-async def trigger_spider(payload: TriggerModel):
+@app.post("/trigger", status_code=201, dependencies=[Depends(api_key_auth)])
+async def trigger_spider(payload: TriggerModel) -> dict:
     async with httpx.AsyncClient() as client:
         if payload.ats_name == 'customrss':
             res = await client.post(

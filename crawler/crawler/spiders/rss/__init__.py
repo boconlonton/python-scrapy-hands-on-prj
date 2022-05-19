@@ -94,7 +94,7 @@ class RssSpider(Spider):
                 else:
                     for ns, val in root.nsmap.items():
                         response.selector.register_namespace(ns, val)
-                    return response.xpath(f'//{self.parent_node}')
+            return response.xpath(f'//{self.parent_node}')
         else:
             raise CloseSpider('Missing parent node')
 

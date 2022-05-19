@@ -18,21 +18,21 @@
 
 ## Test
 
-``curl -X 'POST' \
-  'http://localhost:8000/trigger' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "company_id": {COMPANY_ID},
-  "scrape_id": {SCRAPE_ID},
-  "start_url": {START_URL},
-  "ats_name": {ATS_NAME},
-  "params": {
-    "parent_node": "job",
-    "title": "title",
-    "rid": "referencenumber"
-  }
-}'``
+```
+curl --location --request POST 'http://localhost:8000/trigger' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer 2f927842-de67-43ae-93cc-41716e01964b' \
+--data-raw '{
+    "company_id": 158230,
+    "scrape_id": 53289,
+    "start_url": "https://careers.lids.com/feed/357900",
+    "ats_name": "customrss",
+    "params": {
+        "parent_node": "job",
+        "rid": "ID"
+    }
+}'
+```
 
 ## Local Environment Setup
 
