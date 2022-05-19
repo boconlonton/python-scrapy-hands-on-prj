@@ -11,8 +11,7 @@ import scrapy
 class DuplicateSpiderSpider(scrapy.Spider):
     # Metadata
     name = 'duplicate_spider'
-    start_urls = ['https://mpwpublicdocs.blob.core.windows.net/silkroad/'
-                  'JobPosting.xml']
+    start_urls = ['https://www.andpizzajobs.com/feeds/download/paradox_api/']
 
     # Custom data
 
