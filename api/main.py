@@ -2,9 +2,11 @@ import os
 
 import httpx
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
+from fastapi import Depends
 
-from models import TriggerModel
+from models import TriggerRequest
+from models import TriggerResponse
 
 from custom_rss import CUSTOM_RSS
 
@@ -14,8 +16,11 @@ from authentication import api_key_auth
 app = FastAPI()
 
 
-@app.post("/trigger", status_code=201, dependencies=[Depends(api_key_auth)])
-async def trigger_spider(payload: TriggerModel) -> dict:
+@app.post("/trigger",
+          status_code=200,
+          dependencies=[Depends(api_key_auth)],
+          response_model=TriggerResponse)
+async def trigger_spider(payload: TriggerRequest) -> dict:
     async with httpx.AsyncClient() as client:
         if payload.ats_name == 'customrss':
             res = await client.post(
@@ -47,4 +52,5 @@ async def trigger_spider(payload: TriggerModel) -> dict:
             )
     return {
         'task_id': res.json().get('jobid'),
+        'message': 'success'
     }
