@@ -1,3 +1,6 @@
+import os
+
+
 BOT_NAME = 'crawler'
 
 SPIDER_MODULES = ['crawler.spiders.rss',
@@ -24,5 +27,5 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 ITEM_PIPELINES = {
-    'crawler.pipelines.DuplicatesPipeline': 300,
+    'crawler.pipelines.ItemValidationPipeline': 200,
 }

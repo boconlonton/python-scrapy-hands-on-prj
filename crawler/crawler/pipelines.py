@@ -1,6 +1,9 @@
-from itemadapter import ItemAdapter
+import os
+import json
 
-from scrapy.spiders import Spider
+from io import BytesIO
+
+from itemadapter import ItemAdapter
 
 from scrapy.exceptions import DropItem
 
@@ -9,47 +12,79 @@ from paramiko import Transport
 
 from tempfile import NamedTemporaryFile
 
+from crawler.utils.aws import S3Client
 
-class DuplicatesPipeline:
+from crawler.spiders import BaseSpider
+
+from crawler.spiders.sftp import BaseSftpSpider
+
+
+class ItemValidationPipeline:
 
     def __init__(self):
         self.rids_seen = set()
         self.duplicates = 0
 
-    def process_item(self, item, spider):
+    def process_item(self, item: ItemAdapter, *args, **kwargs):
         adapter = ItemAdapter(item)
         if adapter['rid'] in self.rids_seen:
             self.duplicates += 1
-            raise DropItem(f"Duplicate item found: {item!r}")
+            raise DropItem
         else:
             self.rids_seen.add(adapter['rid'])
             return item
 
-    def close_spider(self, spider: Spider):
+    def close_spider(self, spider: BaseSpider, *args, **kwargs):
         if self.duplicates > 0:
-            spider.logger.warn(f"Duplicated jobs: {self.duplicates}")
+            spider.logger.info(f"DUPLICATED: {self.duplicates} jobs")
 
 
 class SftpPipeline:
 
-    def open_spider(self, spider: Spider):
-        spider.logger.info("Open")
+    def __init__(self):
         self.fo = NamedTemporaryFile()
-        with Transport((spider.HOST_NAME, 22)) as transport:
+
+    def open_spider(self, spider: BaseSftpSpider, *args, **kwargs):
+        spider.logger.info("SFTP PIPELINE")
+        with Transport((spider.host_name, 22)) as transport:
             transport.connect(None,
-                              username=spider.USERNAME,
-                              password=spider.PASSWORD)
+                              username=spider.username,
+                              password=spider.password)
 
             with SFTPClient.from_transport(transport) as sftp_client:
                 spider.logger.info('Connection successfully established...')
-                list_files = sftp_client.listdir_attr(spider.DIRECTORY)
+                list_files = sftp_client.listdir_attr(spider.directory)
                 list_files.sort(key=lambda f: f.st_mtime, reverse=True)
                 newest_feed = list_files[0]
-                sftp_client.getfo(f'{spider.DIRECTORY}/{newest_feed.filename}',
+                spider.logger.info(newest_feed.filename)
+                sftp_client.getfo(f"{spider.directory}/"
+                                  f"{newest_feed.filename}",
                                   self.fo)
-                spider.FILENAME = self.fo.name
+                spider.file_name = self.fo.name
 
-    def close_spider(self, spider: Spider):
-        spider.logger.info("Delete temporary file...")
-        spider.logger.info("Closed")
+    def close_spider(self, *args, **kwargs):
         self.fo.close()
+
+
+class S3UploadPipeline:
+
+    def __init__(self):
+        self._item_pool = list()
+        self.s3_client = S3Client(access_key=os.getenv('AWS_ACCESS_KEY'),
+                                  secret_key=os.getenv('AWS_SECRET_KEY'),
+                                  bucket_name=os.getenv('AWS_S3_BUCKET'),
+                                  region_name=os.getenv('AWS_REGION_NAME'))
+
+    def process_item(self, item: ItemAdapter, *args, **kwargs):
+        self._item_pool.append(item)
+        return item
+
+    def close_spider(self, spider: BaseSpider):
+        """Write to S3"""
+        file_name = f'{spider.company_id}_{spider.scrape_id}.json'
+        self.s3_client.login()
+        self.s3_client.upload(
+            data=BytesIO(json.dumps(self._item_pool).encode()),
+            file_name=file_name
+        )
+        spider.logger.info(f"S3 PIPELINE- {file_name}")

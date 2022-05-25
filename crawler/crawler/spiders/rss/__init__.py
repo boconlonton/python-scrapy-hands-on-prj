@@ -6,7 +6,6 @@ from lxml.etree import QName
 from lxml.etree import cleanup_namespaces
 from lxml.etree import tostring
 
-from scrapy import Spider
 from scrapy import Request
 
 from scrapy.selector import Selector
@@ -15,26 +14,25 @@ from scrapy.exceptions import CloseSpider
 
 from crawler.items import Job
 
+from crawler.spiders import BaseSpider
+from crawler.spiders import MissingAttributeError
 
-class RssSpider(Spider):
+
+class BaseRssSpider(BaseSpider):
     # Metadata
-    IS_PUBLIC = True
-    HAS_CDATA = False
-    HAS_NAMESPACE = False
-    MISSING_NAMESPACE_DEFINITION = False
+    is_public = True
+    has_cdata = False
+    has_namespace = False
+    missing_namespace_definition = False
 
     # Additional Information
-    # Mandatory when IS_PUBLIC=False
-    FEED_URL = ''
-    USERNAME = ''
-    PASSWORD = ''
+    # Mandatory when is_public=False
+    username = None
+    password = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.company_id = kwargs.get('company_id')
-        self.scrape_id = kwargs.get('scrape_id')
-        self.start_url = kwargs.get('start_url')
-        self.ats_name = kwargs.get('ats_name')
+        self.validate_attribute()
 
         self.parent_node = kwargs.get('parent_node')
 
@@ -57,35 +55,31 @@ class RssSpider(Spider):
         self.company_name = kwargs.get('company_name')
 
     def start_requests(self):
-        if self.IS_PUBLIC:
+        if self.is_public:
             yield Request(url=self.start_url)
         else:
-            key = base64.b64encode(f'{self.USERNAME}:{self.PASSWORD}'
+            key = base64.b64encode(f'{self.username}:{self.password}'
                                    .encode('ASCII')).decode('utf-8')
             basic_auth = f"Basic {key}"
             self.logger.info(f'Basic Auth: {basic_auth}')
-            yield Request(url=self.FEED_URL,
+            yield Request(url=self.start_url,
                           headers={
                               'Authorization': basic_auth
                           })
 
     def extract_parent_node(self, response):
         if self.parent_node:
-            if self.HAS_CDATA:
+            if self.has_cdata:
                 parser = XMLParser(strip_cdata=False)
                 root = fromstring(response.body,
                                   parser=parser,
                                   base_url=response.url)
                 selector = Selector(root=root)
                 return selector.xpath(f'//{self.parent_node}')
-            elif self.HAS_NAMESPACE:
+            elif self.has_namespace:
                 root = fromstring(response.text.encode('utf8'))
-                if self.MISSING_NAMESPACE_DEFINITION:
-                    # Iterate through all XML elements
+                if self.missing_namespace_definition:
                     for elem in root.getiterator():
-                        # Skip comments and processing instructions,
-                        # because they do not have names
-                        # Remove a namespace URI in the element's name
                         elem.tag = QName(elem).localname
                     cleanup_namespaces(root)
                     res = fromstring(tostring(root))
@@ -176,3 +170,10 @@ class RssSpider(Spider):
                 brand=self.extract_brand(job),
                 company_name=self.extract_company_name(job)
             )
+
+    def validate_attribute(self):
+        if not self.is_public:
+            check_list = ['username', 'password']
+            for attr in check_list:
+                if getattr(self, attr) is None:
+                    raise MissingAttributeError(f'Missing Attribute: {attr}')

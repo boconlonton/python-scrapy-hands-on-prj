@@ -1,7 +1,7 @@
-from crawler.spiders.rss import RssSpider
+from crawler.spiders.rss import BaseRssSpider
 
 
-class LidCustomRssSpider(RssSpider):
+class LidCustomRssSpider(BaseRssSpider):
     name = "lid_custom_rss"
 
     def extract_rid(self, item) -> str:
