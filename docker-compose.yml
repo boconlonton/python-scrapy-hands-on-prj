@@ -9,6 +9,7 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - ENV=development
       - SCRAPY_HOST=http://crawler:6800
       - SCRAPY_PROJECT=web-crawler
 
@@ -20,4 +21,9 @@ services:
     ports:
       - "6800:6800"
     environment:
+      - ENV=development
       - S3_BUCKET=something
+      - AWS_ACCESS_KEY=key
+      - AWS_SECRET_KEY=secret
+      - AWS_S3_BUCKET=bucket
+      - AWS_REGION_NAME=region
