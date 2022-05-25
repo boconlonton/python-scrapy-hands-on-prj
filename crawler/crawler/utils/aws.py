@@ -49,8 +49,11 @@ class S3Client:
         if self.client is None:
             raise S3AuthenticationException('Unauthorized client')
         try:
-            data.seek(0)
-            self.client.upload_fileobj(data, self._S3_BUCKET, file_name)
+            self.client.upload_fileobj(
+                data,
+                self._S3_BUCKET,
+                file_name
+            )
         except Exception as e:
             return False
         else:

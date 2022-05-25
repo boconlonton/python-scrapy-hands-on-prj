@@ -5,23 +5,19 @@ services:
     build: ./api
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./api/:/api
+      - ./api/:/api:ro
     ports:
       - "8000:8000"
     environment:
-      - ENV=development
       - SCRAPY_HOST=http://crawler:6800
       - SCRAPY_PROJECT=web-crawler
 
   crawler:
     build: ./crawler
     command: scrapyd
-    volumes:
-      - ./crawler/:/scrapy-application/
     ports:
       - "6800:6800"
     environment:
-      - ENV=development
       - S3_BUCKET=something
       - AWS_ACCESS_KEY=key
       - AWS_SECRET_KEY=secret

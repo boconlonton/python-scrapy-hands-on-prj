@@ -4,11 +4,9 @@ from crawler.spiders.rss import BaseRssSpider
 class TowneparkSpider(BaseRssSpider):
     # Metadata
     name = 'townepark'
-    IS_PUBLIC = False
-    HAS_NAMESPACE = True
+    is_public = False
+    has_namespace = True
 
     # Custom data
-    FEED_URL = ('https://wd5-impl-services1.workday.com/ccx/service/customr'
-                'eport2/townepark1/ISU_PDX_Jobs/INT_PDX_Jobs?format=simplexml')
-    USERNAME = 'ISU_PDX_Jobs'
-    PASSWORD = 'April2022!!Paradox'
+    username = 'ISU_PDX_Jobs'
+    password = 'April2022!!Paradox'

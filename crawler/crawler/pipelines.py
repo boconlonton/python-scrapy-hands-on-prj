@@ -56,7 +56,9 @@ class SftpPipeline:
                 list_files = sftp_client.listdir_attr(spider.directory)
                 list_files.sort(key=lambda f: f.st_mtime, reverse=True)
                 newest_feed = list_files[0]
-                sftp_client.getfo(f'{spider.directory/{newest_feed.filename}}',
+                spider.logger.info(newest_feed.filename)
+                sftp_client.getfo(f"{spider.directory}/"
+                                  f"{newest_feed.filename}",
                                   self.fo)
                 spider.file_name = self.fo.name
 
@@ -68,7 +70,6 @@ class S3UploadPipeline:
 
     def __init__(self):
         self._item_pool = list()
-        self._stream = BytesIO()
         self.s3_client = S3Client(access_key=os.getenv('AWS_ACCESS_KEY'),
                                   secret_key=os.getenv('AWS_SECRET_KEY'),
                                   bucket_name=os.getenv('AWS_S3_BUCKET'),
@@ -80,9 +81,10 @@ class S3UploadPipeline:
 
     def close_spider(self, spider: BaseSpider):
         """Write to S3"""
-        json.dump(self._item_pool, self._stream)
         file_name = f'{spider.company_id}_{spider.scrape_id}.json'
         self.s3_client.login()
-        self.s3_client.upload(data=self._stream,
-                              file_name=file_name)
-        spider.logger.info(f"S3 - {file_name}")
+        self.s3_client.upload(
+            data=BytesIO(json.dumps(self._item_pool).encode()),
+            file_name=file_name
+        )
+        spider.logger.info(f"S3 PIPELINE- {file_name}")

@@ -34,12 +34,6 @@ class BaseRssSpider(BaseSpider):
         super().__init__(*args, **kwargs)
         self.validate_attribute()
 
-        self.company_id = kwargs.get('company_id')
-        self.scrape_id = kwargs.get('scrape_id')
-
-        self.start_url = kwargs.get('start_url')
-        self.ats_name = kwargs.get('ats_name')
-
         self.parent_node = kwargs.get('parent_node')
 
         self.rid = kwargs.get('rid')

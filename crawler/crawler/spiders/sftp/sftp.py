@@ -27,9 +27,9 @@ class SftpSpider(BaseSftpSpider):
             category = job.xpath('.//category/text()').get()
             description = job.xpath('.//description/text()').get()
 
-            yield Job({
-                'rid': rid,
-                'title': title,
-                'category_list': [category],
-                'description': description,
-            })
+            yield Job(
+                rid=rid,
+                title=title,
+                custom_categories=[category],
+                description=description,
+            )
