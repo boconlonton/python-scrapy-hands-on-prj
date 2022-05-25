@@ -1,7 +1,7 @@
-from crawler.spiders.rss import RssSpider
+from crawler.spiders.rss import BaseRssSpider
 
 
-class TowneparkSpider(RssSpider):
+class TowneparkSpider(BaseRssSpider):
     # Metadata
     name = 'townepark'
     IS_PUBLIC = False

@@ -1,7 +1,7 @@
-from crawler.spiders.rss import RssSpider
+from crawler.spiders.rss import BaseRssSpider
 
 
-class DavitaCustomRssSpider(RssSpider):
+class DavitaCustomRssSpider(BaseRssSpider):
     name = "davita_custom_rss"
 
     IS_PUBLIC = False
