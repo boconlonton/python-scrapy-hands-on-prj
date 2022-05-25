@@ -17,7 +17,7 @@ services:
     build: ./crawler
     command: scrapyd
     volumes:
-      - ./crawler/:/app/
+      - ./crawler/:/scrapy-application/
     ports:
       - "6800:6800"
     environment:
