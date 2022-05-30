@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "api",
-            "image": "{{ECR_URL}}/scrapy-application:latest",
+            "image": "{{ECR_URL}}/scrapy-api:latest",
             "portMappings": [
                 {
                     "containerPort": 8000,
@@ -39,7 +39,7 @@
         },
         {
             "name": "crawler",
-            "image": "{{ECR_URL}}/scrapy-api:latest",
+            "image": "{{ECR_URL}}/scrapy-crawler:latest",
             "portMappings": [
                 {
                     "containerPort": 6800,
