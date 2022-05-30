@@ -1,0 +1,85 @@
+{
+    "family": "scrapy-cluster",
+    "containerDefinitions": [
+        {
+            "name": "api",
+            "image": "{{ECR_URL}}/scrapy-application:latest",
+            "portMappings": [
+                {
+                    "containerPort": 8000,
+                    "hostPort": 8000
+                }
+            ],
+            "command": [
+                "uvicorn",
+                "main:app",
+                "--reload",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000"
+            ],
+            "environment": [
+                {
+                    "name": "SCRAPY_HOST",
+                    "value": "http://crawler:6800"
+                },
+                {
+                    "name": "SCRAPY_PROJECT",
+                    "value": "web-crawler"
+                }
+            ],
+            "essential": true,
+            "mountPoints": [
+                {
+                    "containerPath": "/api",
+                    "sourceVolume": "_Api"
+                }
+            ]
+        },
+        {
+            "name": "crawler",
+            "image": "{{ECR_URL}}/scrapy-api:latest",
+            "portMappings": [
+                {
+                    "containerPort": 6800,
+                    "hostPort": 6800
+                }
+            ],
+            "command": [
+                "scrapyd"
+            ],
+            "environment": [
+                {
+                    "name": "S3_BUCKET",
+                    "value": "something"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY",
+                    "value": "key"
+                },
+                {
+                    "name": "AWS_SECRET_KEY",
+                    "value": "secret"
+                },
+                {
+                    "name": "AWS_S3_BUCKET",
+                    "value": "bucket"
+                },
+                {
+                    "name": "AWS_REGION_NAME",
+                    "value": "region"
+                }
+            ],
+            "essential": true
+        }
+    ],
+    "volumes": [
+        {
+            "host": {
+                "sourcePath": "./api/"
+            },
+            "name": "_Api"
+        }
+    ]
+}
