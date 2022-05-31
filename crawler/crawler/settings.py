@@ -29,3 +29,8 @@ ROBOTSTXT_OBEY = False
 ITEM_PIPELINES = {
     'crawler.pipelines.ItemValidationPipeline': 200,
 }
+
+# Configure extensions
+EXTENSIONS = {
+    'crawler.extensions.SentryLogging': -1
+}

@@ -8,3 +8,4 @@ services:
   crawler:
     environment:
       - ENV=development
+      - SENTRY_DSN=https://5900457b02e3411691fe8d46e46a4071@o1268772.ingest.sentry.io/6456608
