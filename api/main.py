@@ -16,7 +16,7 @@ from authentication import api_key_auth
 app = FastAPI()
 
 
-@app.post("/trigger",
+@app.post("/api/v1/trigger",
           status_code=200,
           dependencies=[Depends(api_key_auth)],
           response_model=TriggerResponse)
