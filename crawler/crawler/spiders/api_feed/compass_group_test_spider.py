@@ -4,39 +4,41 @@ import json
 import scrapy
 from scrapy import Spider
 
-_COMPANY_LIST = ['6306682', '6306706', '6306707',
-                 '6306708', '167267', '154407',
-                 '128171', '128176', '128180',
-                 '128178', '291702', '226530',
-                 '158776', '128177', '137265',
-                 '128191', '137264', '128192',
-                 '163467', '128190', '128189',
-                 '128188', '169642', '128185',
-                 '128186', '128184', '128182',
-                 '167266', '128181', '128179',
-                 '128174', '128175', '128173',
-                 '128172', '128169', '128168',
-                 '229282', '128167', '128166',
-                 '128170']
+_COMPANY_LIST = ['3949681', '3949609', '3949616',
+                 '3949624', '3949625', '187531',
+                 '119707', '110213', '116707',
+                 '121974', '110223', '119667',
+                 '110236', '110227', '110234',
+                 '110220', '110244', '114514',
+                 '110243', '110211', '110228',
+                 '110239', '110233', '110237',
+                 '188238', '121975', '110235',
+                 '110222', '116007', '119827',
+                 '126807', '110231', '121907',
+                 '110224', '110210', '126246',
+                 '110217', '110221', '110230',
+                 '110242', '119407', '110240',
+                 '110216', '119347', '110240'
+                 ]
 
 
 class CompassGroupSpider(Spider):
-    name = "compass_group_spider"
+    name = "compass_group_test_spider"
 
-    USERNAME = 'oliviaapi'
-    PASSWORD = 'RKXGaKXUPVf74h^+'
-    SFSF_COMPANY_ID = "CGNA"
+    USERNAME = 'oliviaapi_scr'
+    PASSWORD = 'compass_scr456!'
+    SFSF_COMPANY_ID = "CGNAtest"
 
     def _prepare_query(self, brand_id: int):
         filter_list = [
-            f'filter11/id eq {brand_id}',
-            'deleted eq 0',
-            "internalStatus eq 'Approved'",
-            "jobReqPostings/boardId eq '_external'",
-            "status/externalCode eq 'reqStatus_Open'",
-            "(jobReqPostings/postingStatus eq 'Success' or "
-            "jobReqPostings/postingStatus eq 'Updated')",
-            "(legalEntity_obj/externalCode eq 'CGUSA' or filter3/id eq '4066')"
+            f"filter11%2fid+eq+%27{brand_id}%27+and+deleted+eq+0+and"
+            f"+internalStatus+eq+%27Approved%27+and+jobReqPostings%2fboardId"
+            f"+eq+%27_external%27+and+status%2fexternalCode+eq"
+            f"+%27reqStatus_Open%27+and+("
+            f"jobReqPostings%2fpostingStatus+eq+%27Success%27+or"
+            f"+jobReqPostings%2fpostingStatus+eq+%27Updated%27)+and+("
+            f"legalEntity_obj%2fexternalCode+eq+%27CGUSA%27+or+filter3%2fid"
+            f"+eq+%274066%27) "
         ]
 
         expand_list = [
@@ -55,6 +57,7 @@ class CompassGroupSpider(Spider):
             "req_classification",
             "custFlsa/picklistLabels",
             "req_classification/picklistLabels",
+            "hiringManagerTeam"
         ]
 
         select_list = [
@@ -81,6 +84,7 @@ class CompassGroupSpider(Spider):
             "custFlsa/picklistLabels/label",
             "req_classification/picklistLabels/label",
             "Cust_clntAcName",
+            "hiringManagerTeam/email"
         ]
 
         return {
@@ -97,11 +101,12 @@ class CompassGroupSpider(Spider):
         )
 
     def _build_url(self, brand_id):
-        return (f"https://api8.successfactors.com/odata/v2/JobRequisition?"
+        return (f"https://api8preview.sapsf.com/odata/v2/JobRequisition?"
                 f"{self._build_query_string(brand_id)}")
 
     def _build_headers(self):
-        auth = base64.b64encode(f"{self.USERNAME}@{self.SFSF_COMPANY_ID}:{self.PASSWORD}".encode("ASCII"))
+        auth = base64.b64encode(f"{self.USERNAME}@{self.SFSF_COMPANY_ID}"
+                                f":{self.PASSWORD}".encode("ASCII"))
         self.logger.info(auth.decode("utf-8"))
         return {
             'Authorization': f'Basic {auth.decode("utf-8")}'
@@ -113,22 +118,15 @@ class CompassGroupSpider(Spider):
                                  headers=self._build_headers())
 
     def parse(self, response, *args, **kwargs) -> None:
+        self.logger.info(response)
         data = json.loads(response.text)
         if data.get('d'):
             jobs = data['d'].get('results')
             for job in jobs:
-                description = [
-                    job['jobReqLocale']['results'][0]['extJobDescHeader'],
-                    job['jobReqLocale']['results'][0]['externalJobDescription'],
-                    job['jobReqLocale']['results'][0]['extJobDescFooter']
-                ]
-                concat_description = "".join(description)
-                if "XXX" in concat_description:
+                hiring_manager = job.get('hiringManagerTeam')['results']
+                if hiring_manager:
                     yield {
-                        'rid': job.get('jobReqId'),
-                        'description': concat_description,
-                        'extJobDescHeader': job['jobReqLocale']['results'][0]['extJobDescHeader'],
-                        'original_data': job
+                        'hiring': hiring_manager
                     }
             next_url = data['d'].get('__next')
             if next_url:

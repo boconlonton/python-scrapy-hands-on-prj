@@ -26,9 +26,9 @@ ROBOTSTXT_OBEY = False
 # }
 
 # Configure item pipelines
-ITEM_PIPELINES = {
-    'crawler.pipelines.ItemValidationPipeline': 200,
-}
+# ITEM_PIPELINES = {
+#     'crawler.pipelines.ItemValidationPipeline': 200,
+# }
 
 # Configure extensions
 EXTENSIONS = {
