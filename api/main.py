@@ -3,6 +3,8 @@ import os
 import httpx
 
 from fastapi import FastAPI
+
+
 from fastapi import Depends
 
 from models import TriggerRequest
@@ -22,6 +24,10 @@ app = FastAPI()
           response_model=TriggerResponse)
 async def trigger_spider(payload: TriggerRequest) -> dict:
     async with httpx.AsyncClient() as client:
+        print(payload)
+        print(os.getenv('SCRAPY_HOST'))
+        print(os.getenv('SCRAPY_PROJECT'))
+        print("main.py is here")
         if payload.ats_name == 'customrss':
             res = await client.post(
                 url=f"{os.getenv('SCRAPY_HOST')}/schedule.json",

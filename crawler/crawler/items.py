@@ -37,7 +37,7 @@ class User:
 
 
 def serialize_user(value: List[User]):
-    return [user.to_dict() for user in value]
+    return [user.to_dict() for user in value] if value else None
 
 
 class Job(Item):
