@@ -1,4 +1,3 @@
-import os
 
 
 BOT_NAME = 'crawler'
@@ -12,6 +11,13 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 
 ROBOTSTXT_OBEY = False
 
+# SPLASH_URL = 'http://192.168.59.103:8050'
+
+# SPIDER_MIDDLEWARES = {
+#     'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+# }
+
+# DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 # Configure a delay for requests for the same website (default: 0)
 # DOWNLOAD_DELAY = 3
 

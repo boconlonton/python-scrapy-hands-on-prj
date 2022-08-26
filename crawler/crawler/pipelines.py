@@ -19,6 +19,22 @@ from crawler.spiders import BaseSpider
 from crawler.spiders.sftp import BaseSftpSpider
 
 
+class JsonWriterPipeline:
+
+    def open_spider(self, spider):
+        self.file = open('items.jl', 'w')
+
+    def close_spider(self, spider):
+        self.file.close()
+
+    def process_item(self, item, spider):
+        line = json.dumps(ItemAdapter(item).asdict()) + "\n"
+        self.file.write(line)
+        print(f"ITEm are here: {item}")
+        return item
+    print("do you even run over here?")
+
+
 class ItemValidationPipeline:
 
     def __init__(self):

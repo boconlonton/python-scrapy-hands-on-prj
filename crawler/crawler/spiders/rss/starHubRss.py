@@ -1,14 +1,24 @@
 
 import scrapy
-from crawler.items import Job, User, UserType
+from crawler.items import Job
 
 
-class starHubRssSpider(scrapy.Spider):
+class StarHubRssSpider(scrapy.Spider):
     # meta data
     name = "starhub_rss"
     start_urls = ['https://starhubltdt1.valhalla10'
                   '.stage.jobs2web.com/feed/349960']
     print("This is spider start?")
+    custom_settings = {
+        'FEED_URI': 'spider_' + name,
+        'FEED_FORMAT': 'json',
+        'FEED_EXPORTERS': {
+            'json': 'scrapy.exporters.JsonItemExporter',
+        },
+        'FEED_EXPORT_ENCODING': 'utf-8',
+        'ITEM_PIPELINES': {
+        }
+    }
 
     def start_requests(self):
         yield scrapy.Request(url=self.start_urls[0], callback=self.parse)
@@ -37,11 +47,8 @@ class starHubRssSpider(scrapy.Spider):
                 'postal_code': postalcode,
             })
 
-            recruiterEmail = "recruiterTest@gmail.com"
-            if recruiterEmail:
-                job['users'] = [User(user_type=UserType.Recruiter,
-                                     email=recruiterEmail).to_dict()]
-            print(recruiterEmail)
-            print(f"Parsing Function is here? {x}")
-            print(job['users'])
+            # recruiterEmail = "recruiterTest@gmail.com"
+            # if recruiterEmail:
+            #     job['users'] = [User(user_type=UserType.Recruiter,
+            #                          email=recruiterEmail).to_dict()]
             yield job
